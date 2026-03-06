@@ -1,0 +1,15 @@
+{
+  "name": "codenest",
+  "version": "1.0.0",
+  "description": "A web-based coding playground supporting C++, Python, and JavaScript with user authentication and code execution via Judge0 API",
+  "keywords": [
+    "Codenest"
+  ],
+  "license": "ISC",
+  "author": "Basit and Aman",
+  "type": "commonjs",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
