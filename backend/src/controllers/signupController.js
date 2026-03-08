@@ -1,32 +1,40 @@
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 import { User } from "../models/userModel.js";
 import ApiResponse from "../utils/apiResponse.js";
-const signUp = async(req,res)=>{
-      try {
-        
-      
-    const {fullname,username,email,password}=req.body;
 
-    const alreadyExit=await User.findOne({email});
-    if(alreadyExit){
-        return res.json(new ApiResponse(400,"Email is already registered"))
+const signUp = async (req, res) => {
+  try {
+    const { fullname, username, email, password } = req.body;
+
+    const alreadyExit = await User.findOne({ email });
+    if (alreadyExit) {
+      return res
+        .status(400)
+        .json(
+          new ApiResponse(400, "error", "Email is already registered", null),
+        );
     }
 
-    const hashedPassword=await bcrypt.hash(password,10);
-    const newUser=await User.create({
-        fullname,
-        username,
-        email,
-        password:hashedPassword,
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      fullname,
+      username,
+      email,
+      password: hashedPassword,
     });
-     return res.json(
-        new ApiResponse(201,"Signup Successful",newUser)     )
-    } catch (error) {
-        return res.json(
-          new ApiResponse(500,"Signup Failed")
-        )
-      }    
 
-}
+    // Strip password before sending
+    const userResponse = newUser.toObject();
+    delete userResponse.password;
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, "success", "Signup Successful", userResponse));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiResponse(500, "error", "Signup Failed", null));
+  }
+};
 
 export default signUp;
