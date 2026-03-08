@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Check, X } from "lucide-react";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -12,6 +14,9 @@ const Signup = () => {
     confirmPassword: "",
   });
 
+
+
+
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -19,11 +24,37 @@ const Signup = () => {
     backend: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, backend: "", [name]: "" }));
-  };
+const [showPassword,setShowPassword]=useState({
+  showPassword:false,
+  showConfirmPassword:false
+})
+
+const [passwordRules, setPasswordRules] = useState({
+  length: false,
+  alphabets: false,
+  numbers: false,
+  specialCharacters: false
+});
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  
+  setFormData((prev) => ({ ...prev, [name]: value }));
+  setErrors((prev) => ({ ...prev, backend: "", [name]: "" }));
+
+  if(name === "password"){
+    const alphaCount = (value.match(/[a-zA-Z]/g) || []).length;
+    const numCount = (value.match(/[0-9]/g) || []).length;
+    const specialCharacter = (value.match(/[!@#$.%^&*]/g) || []).length;
+
+    setPasswordRules({
+      length: value.length >= 8,
+      alphabets: alphaCount >= 5,
+      numbers: numCount >= 2,
+      specialCharacters: specialCharacter >= 1,
+    });
+  }
+};
 
   const validateForm = () => {
     let tempErrors = {
@@ -39,24 +70,16 @@ const Signup = () => {
       isValid = false;
     }
 
-    const alphaCount = (formData.password.match(/[a-zA-Z]/g) || []).length;
-    const numCount = (formData.password.match(/[0-9]/g) || []).length;
-
-    if (formData.password.length < 8) {
-      tempErrors.password = "Password must be at least 8 characters";
-      isValid = false;
-    } else if (alphaCount < 5) {
-      tempErrors.password = "Password must have at least 5 alphabets";
-      isValid = false;
-    } else if (numCount < 2) {
-      tempErrors.password = "Password must have at least 2 numbers";
-      isValid = false;
-    }
 
     if (formData.password !== formData.confirmPassword) {
       tempErrors.confirmPassword = "Passwords do not match!";
       isValid = false;
     }
+    if(!passwordRules.length || !passwordRules.alphabets || !passwordRules.numbers || !passwordRules.specialCharacters){
+  tempErrors.password = "Password does not meet all requirements";
+  isValid = false;
+}
+      
 
     setErrors(tempErrors);
     return isValid;
@@ -80,7 +103,9 @@ const Signup = () => {
       if (response.data) {
         localStorage.setItem("user", JSON.stringify(response.data));
         alert("Account created successfully!");
+        console.log("Signup Response:", response.data);
         navigate("/dashboard");
+        
       }
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong";
@@ -168,27 +193,46 @@ const Signup = () => {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Password
             </label>
+
+            <div className="relative"> 
             <input
-              type="password"
+              type={showPassword.showPassword ? "text" : "password"}
               name="password"
               onChange={handleChange}
               value={formData.password}
-              className={`w-full px-4 py-3 bg-slate-900/50 border ${errors.password ? "border-red-500" : "border-slate-600"} rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
+              className={`w-full px-4 py-3  bg-slate-900/50 border ${errors.password ? "border-red-500" : "border-slate-600"} rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
               placeholder="••••••••"
               required
-            />
+
+              
+              />
+ <button
+          type="button"
+          onClick={() => setShowPassword({
+            showPassword:!showPassword.showPassword,
+            showConfirmPassword:showPassword.showConfirmPassword
+          })}
+          className="absolute right-2 top-4"
+        >
+          {showPassword.showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+        </button>
+
+            </div>
+           
+
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
             )}
           </div>
-
+  
           {/* Confirm Password */}
           <div className="md:col-span-1">
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Confirm Password
             </label>
+            <div className="relative"> 
             <input
-              type="password"
+              type={showPassword.showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               onChange={handleChange}
               value={formData.confirmPassword}
@@ -196,12 +240,71 @@ const Signup = () => {
               placeholder="••••••••"
               required
             />
+             <button
+          type="button"
+          onClick={() => setShowPassword({
+            showPassword:showPassword.showPassword,
+            showConfirmPassword:!showPassword.showConfirmPassword
+          })}
+          className="absolute right-2 top-4"
+        >
+          {showPassword.showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+        </button>
+
+      </div>
             {errors.confirmPassword && (
               <p className="text-red-500 text-xs mt-1">
                 {errors.confirmPassword}
               </p>
             )}
           </div>
+<div className="text-sm"> 
+<ul>
+  <li className="flex items-center gap-2">
+    {passwordRules.length ? (
+      <Check className="w-4 h-4 text-green-400" />
+    ) : (
+      <X className="w-4 h-4 text-red-400" />
+    )}
+    <span className={passwordRules.length ? "text-green-400" : "text-red-400"}>At least 8 characters</span> 
+  </li>
+
+  <li className="flex items-center gap-2">
+    {passwordRules.alphabets ? (
+      <Check className="w-4 h-4 text-green-400" />
+    ) : (
+      <X className="w-4 h-4 text-red-400" />
+    )}
+    <span className={passwordRules.alphabets ? "text-green-400" : "text-red-400"}>
+    At least 5 alphabets
+    </span>
+  </li>
+
+  <li className="flex items-center gap-2">
+    {passwordRules.numbers ? (
+      <Check className="w-4 h-4 text-green-400" />
+    ) : (
+      <X className="w-4 h-4 text-red-400" />
+    )}
+
+    <span className={passwordRules.numbers ? "text-green-400" : "text-red-400"}>
+      At least 2 numbers
+    </span>
+  </li>
+
+  <li className="flex items-center gap-2">
+    {passwordRules.specialCharacters ? (
+      <Check className="w-4 h-4 text-green-400" />
+    ) : (
+      <X className="w-4 h-4 text-red-400" />
+    )}
+     <span className={passwordRules.specialCharacters ? "text-green-400" : "text-red-400"}> 
+    At least 1 special character
+    </span>
+  </li>
+</ul>
+
+</div>
 
           <button
             type="submit"

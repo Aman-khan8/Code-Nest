@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/userModel.js";
+import jwt from "jsonwebtoken"
 import ApiResponse from "../utils/apiResponse.js";
+
 
 const signUp = async (req, res) => {
   try {
@@ -27,9 +29,22 @@ const signUp = async (req, res) => {
     const userResponse = newUser.toObject();
     delete userResponse.password;
 
+      const token=jwt.sign({id:userResponse._id},
+        process.env.JWT_Scret,
+        {
+          expiresIn:"3d"
+        }
+
+      )
+
     return res
       .status(201)
-      .json(new ApiResponse(201, "success", "Signup Successful", userResponse));
+      .json(new ApiResponse(201, "success", "Signup Successful", {
+        user:userResponse,
+        token:token
+      }
+    )
+  );
   } catch (error) {
     return res
       .status(500)

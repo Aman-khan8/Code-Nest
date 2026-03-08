@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +15,10 @@ const Login = () => {
     email: "",
     backend: "",
   });
+
+  const [showPassword,setShowPassword]=useState(false);
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -92,15 +97,27 @@ const Login = () => {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Password
             </label>
+           <div className="relative"> 
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
-              value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              value={formData.password}
+              className={`w-full px-4 py-3  bg-slate-900/50 border ${errors.password ? "border-red-500" : "border-slate-600"} rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
               placeholder="••••••••"
               required
-            />
+
+              
+              />
+ <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-2 top-4"
+        >
+          {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+        </button>
+
+            </div>
           </div>
 
           <button
