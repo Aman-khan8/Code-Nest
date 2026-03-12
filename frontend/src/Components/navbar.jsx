@@ -1,39 +1,78 @@
-
-import { Save,Play,Sun,Moon } from "lucide-react";
+import { Save, Play, Sun, Moon } from "lucide-react";
 import Button from "./Button.jsx";
-import { useState } from "react";
-import {useSelector,useDispatch} from "react-redux";
-import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleMode } from "../store/themeSlicer.js";
 
-const Navbar =()=>{
+const Navbar = () => {
+  const mode = useSelector((state) => state.theme.mode);
+  const dispatch = useDispatch();
 
-const mode=useSelector((state)=>state.theme.mode)
-const dispatch=useDispatch()
+  return (
+    <div className="w-full flex items-center justify-between px-6 py-3 
+    backdrop-blur-md 
+    border-b border-slate-700/60 
+    shadow-lg shadow-black/30">
 
+      {/* Logo */}
+      <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight
+      bg-linear-to-r from-blue-400 via-indigo-400 to-emerald-400
+      bg-clip-text text-transparent">
+        DevArena
+      </h1>
 
-useEffect(() => {
-  console.log("New mode:", mode);
-}, [mode]);
+      {/* Controls */}
+      <div className="flex items-center gap-3">
 
-    return(
-    <>
-     <div className=" w-full flex justify-between"> 
-  <h1 className="text-xl md:text-3xl font-extrabold tracking-tight bg-linear-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent antialiased">
-          DevArena
-        </h1>
+        {/* Theme Toggle */}
+        <Button
+          content={mode === "dark" ? <Moon size={18}/> : <Sun size={18}/>}
+          className="p-2 bg-slate-800/70 hover:bg-slate-700 
+          border border-slate-600/40
+          rounded-lg 
+          shadow-md shadow-black/40
+                    text-white
+          hover:shadow-lg hover:shadow-blue-500/20
+          transition-all duration-200"
+          onClick={() => dispatch(toggleMode())}
+        />
 
-        <div className="flex gap-3">
-
-             <Button content ={<> 
-              {mode==="dark"?<Moon size={18}/>:<Sun size={18}/>}
-              
-              </>} className="bg-slate-950 text-white cursor-pointer" onClick={() => dispatch(toggleMode())}/>  
-            <Button content ={<> <Play size={18} /> <h1>Run</h1> </>} className="bg-slate-950 text-white cursor-pointer"/>
-<Button content ={<> <Save size={18} /> <h1>Save</h1>  </>} className="bg-green-600 text-white cursor-pointer"/>
-        
+        {/* Run */}
+        <Button
+          content={
+            <div className="flex items-center gap-2">
+              <Play size={18}/>
+              <span>Run</span>
             </div>
-</div>
-</> )
-}
+          }
+          className="px-4 py-2 bg-slate-800 hover:bg-slate-700
+          border border-slate-600/40
+          rounded-lg
+          shadow-md shadow-black/40
+                    text-white
+          hover:shadow-lg hover:shadow-blue-500/20
+          transition-all duration-200"
+        />
+
+        {/* Save */}
+        <Button
+          content={
+            <div className="flex items-center gap-2">
+              <Save size={18}/>
+              <span>Save</span>
+            </div>
+          }
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500
+          border border-emerald-400/40
+          rounded-lg
+          shadow-md shadow-emerald-900/40
+          text-white
+          hover:shadow-lg hover:shadow-emerald-500/40
+          transition-all duration-200"
+        />
+
+      </div>
+    </div>
+  );
+};
 
 export default Navbar;
