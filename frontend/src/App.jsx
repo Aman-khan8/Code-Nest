@@ -4,10 +4,10 @@ import LandingPage from "./pages/landingPage";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import Dashboard from "./pages/dashboard";
-
+ import CompilerScreen from "./pages/compiler";
 function App() {
   return (
-    <BrowserRouter>
+   /* <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
@@ -15,6 +15,10 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
+    */
+      <CompilerScreen/>
+
+
   );
 }
 
