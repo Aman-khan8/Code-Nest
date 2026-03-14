@@ -3,24 +3,36 @@ import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript"; // ✅ import JS
 import { python } from "@codemirror/lang-python";         // ✅ import Python
 import { cpp } from "@codemirror/lang-cpp";
+import { useSelector } from "react-redux";
+
+
 const CodeEditor = ({ code, setCode, language }) => {
-  
-  // Map language string to CodeMirror extension
+
+
+  const theme=useSelector((state)=>  state.theme.mode);
   const languageExtension = () => {
-    if (language === "cpp") return cpp();
-    if (language === "python") return python();
-    if (language === "javascript") return javascript();
-    return cpp(); // default
+    switch(language) {
+      case "cpp": return cpp();
+      case "python": return python();
+      case "javascript": return javascript();
+      default: return cpp();
+    }
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full">
       <CodeMirror
         value={code}
-        height="83vh"
+        height="100%" 
+        theme={theme==="dark"?"dark":"light"} // You can also pass the Redux theme here
         extensions={[languageExtension()]}
         onChange={(value) => setCode(value)}
-        theme="dark"
+        className="text-base sm:text-lg"
+        basicSetup={{
+          lineNumbers: true,
+          foldGutter: true,
+          highlightActiveLine: true,
+        }}
       />
     </div>
   );

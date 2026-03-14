@@ -7,16 +7,17 @@ import Dashboard from "./pages/dashboard";
  import CompilerScreen from "./pages/compiler";
 function App() {
   return (
-   /* <BrowserRouter>
+   <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/compiler" element={<CompilerScreen />} />
       </Routes>
     </BrowserRouter>
-    */
-      <CompilerScreen/>
+    
+     
 
 
   );
